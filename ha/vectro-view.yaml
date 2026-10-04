@@ -1,0 +1,283 @@
+title: Vectro
+path: vectro
+icon: mdi:robot-happy
+type: sections
+max_columns: 3
+sections:
+  - type: grid
+    cards:
+      - type: heading
+        heading: Vectro X9C2
+        heading_style: title
+        icon: mdi:robot-happy
+        badges:
+          - type: entity
+            entity: sensor.vectro_x9c2_battery_voltage
+          - type: entity
+            entity: binary_sensor.vectro_x9c2_on_charger
+            show_state: false
+            tap_action:
+              action: url
+              url_path: http://10.0.0.215:8080
+      - type: picture-entity
+        entity: camera.vectro_x9c2_live
+        camera_view: live
+        show_name: false
+        show_state: false
+        tap_action:
+          action: more-info
+        grid_options:
+          columns: 12
+      - type: tile
+        entity: sensor.vectro_x9c2_last_seen
+        name: Last seen
+        icon: mdi:face-recognition
+        grid_options:
+          columns: 4
+      - type: tile
+        entity: event.vectro_x9c2_face_seen
+        name: Face seen
+        grid_options:
+          columns: 4
+      - type: tile
+        entity: number.vectro_x9c2_presence_timeout
+        name: Away after (min without a face)
+        features:
+          - type: numeric-input
+            style: buttons
+        grid_options:
+          columns: 12
+          rows: 2
+      - type: tile
+        entity: number.vectro_x9c2_auto_snapshot_interval
+        name: Auto-snapshot every (s, 0 = off)
+        features:
+          - type: numeric-input
+            style: buttons
+        grid_options:
+          columns: 12
+          rows: 2
+  - type: grid
+    cards:
+      - type: heading
+        heading: Controls
+        icon: mdi:controller
+      - type: entities
+        entities:
+          - entity: text.vectro_x9c2_say_text
+            name: Say
+          - entity: select.vectro_x9c2_eye_color
+            name: Eyes
+          - entity: select.vectro_x9c2_volume
+            name: Volume
+        grid_options:
+          columns: 12
+      - type: tile
+        entity: button.vectro_x9c2_turn_left
+        name: Left
+        icon: mdi:rotate-left
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_turn_left
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_drive_forward
+        name: Forward
+        icon: mdi:arrow-up-bold
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_drive_forward
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_turn_right
+        name: Right
+        icon: mdi:rotate-right
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_turn_right
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_head_up
+        name: Head up
+        icon: mdi:arrow-up-circle
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_head_up
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_drive_backward
+        name: Back
+        icon: mdi:arrow-down-bold
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_drive_backward
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_lift_up
+        name: Lift up
+        icon: mdi:forklift
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_lift_up
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_head_down
+        name: Head down
+        icon: mdi:arrow-down-circle
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_head_down
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_head_level
+        name: Level
+        icon: mdi:circle-outline
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_head_level
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_lift_down
+        name: Lift down
+        icon: mdi:arrow-collapse-down
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_lift_down
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_drive_off_charger
+        name: Drive off
+        icon: mdi:robot-outline
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_drive_off_charger
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: button.vectro_x9c2_go_to_charger
+        name: Go home
+        icon: mdi:home-battery
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_go_to_charger
+        grid_options:
+          columns: 4
+          rows: 2
+      - type: tile
+        entity: sensor.vectro_x9c2_activity
+        name: Settings
+        icon: mdi:cog
+        vertical: true
+        hide_state: true
+        tap_action:
+          action: url
+          url_path: http://10.0.0.215:8080
+        grid_options:
+          columns: 4
+          rows: 2
+  - type: grid
+    cards:
+      - type: heading
+        heading: Status
+        icon: mdi:heart-pulse
+      - type: tile
+        entity: sensor.vectro_x9c2_activity
+        name: Activity
+        grid_options:
+          columns: 4
+      - type: tile
+        entity: binary_sensor.vectro_x9c2_charging
+        name: Charging
+        grid_options:
+          columns: 4
+      - type: tile
+        entity: sensor.vectro_x9c2_battery
+        name: Battery
+        grid_options:
+          columns: 4
+      - type: tile
+        entity: binary_sensor.vectro_x9c2_desk_occupied
+        name: At desk
+        grid_options:
+          columns: 4
+      - type: history-graph
+        title: Battery voltage
+        hours_to_show: 24
+        entities:
+          - entity: sensor.vectro_x9c2_battery_voltage
+        grid_options:
+          columns: 12
+      - type: history-graph
+        title: Activity
+        hours_to_show: 24
+        entities:
+          - entity: sensor.vectro_x9c2_activity
+          - entity: binary_sensor.vectro_x9c2_charging
+          - entity: binary_sensor.vectro_x9c2_on_charger
+          - entity: binary_sensor.vectro_x9c2_desk_occupied
+        grid_options:
+          columns: 12
+cards: []

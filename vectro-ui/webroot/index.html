@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vectro</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="theme-color" content="#0e1013">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+                <rect x="2" y="2" width="60" height="60" rx="14" fill="#0e1013" stroke="#ffb000" stroke-width="3"/>
+                <rect x="13" y="22" width="14" height="20" rx="4" fill="#ffb000"/>
+                <rect x="37" y="22" width="14" height="20" rx="4" fill="#ffb000"/>
+                <rect x="10" y="50" width="44" height="3" rx="1.5" fill="#ffb000" opacity="0.5"/>
+            </svg>
+            <span class="wordmark">VECTRO</span>
+            <span class="tagline">retro vector</span>
+        </div>
+        <div class="status-pills">
+            <span id="pillName" class="pill">…</span>
+            <span id="pillBattery" class="pill">battery …</span>
+            <span id="pillHA" class="pill">HA …</span>
+        </div>
+    </header>
+
+    <div class="layout">
+        <nav class="tabs" aria-label="Sections">
+            <button class="active" data-target="#overview">Overview</button>
+            <button data-target="#voice">Voice &amp; Home Assistant</button>
+            <button data-target="#jdocsettings">Preferences</button>
+            <button data-target="#wakeword">Wake Word</button>
+            <button data-target="#faces">Faces</button>
+            <button data-target="#mainmods">Performance</button>
+            <button data-target="#aud">Updates</button>
+        </nav>
+
+        <main>
+            <!-- Overview / diagnostics -->
+            <section id="overview" class="tab-content active">
+                <div class="section-head">
+                    <h2>Overview</h2>
+                    <div class="actions">
+                        <label class="toggle"><input type="checkbox" id="diagAuto" checked> auto-refresh</label>
+                        <button onclick="loadDiagnostics()">Refresh</button>
+                    </div>
+                </div>
+                <div id="diagFault" class="banner banner-bad" hidden></div>
+                <div class="card">
+                    <h3>Actions</h3>
+                    <div id="actionStatus" class="banner" hidden></div>
+                    <div class="actions">
+                        <button onclick="robotAction('calibrateHead', 'Recalibrate the head? His software restarts and he is unresponsive for about a minute.')" title="Restart the robot software so the head and lift recalibrate">Calibrate head</button>
+                        <button class="secondary" onclick="robotAction('headResync')" title="Sweep the head between its end stops">Sweep head</button>
+                        <button class="secondary" onclick="robotAction('restartVoice')">Restart voice services</button>
+                        <button class="secondary" onclick="robotAction('restartRobot', 'Restart all robot software? He will be unresponsive for about a minute.')">Restart robot software</button>
+                        <button class="secondary danger" onclick="robotAction('reboot', 'Reboot Vector?')">Reboot</button>
+                    </div>
+                    <p id="resyncInfo" class="muted small"></p>
+                </div>
+                <div class="grid control-grid">
+                    <div class="card">
+                        <h3>Drive</h3>
+                        <div class="dpad">
+                            <button class="pad up" onclick="robotCommand('forward')" title="Forward 10 cm">▲</button>
+                            <button class="pad left" onclick="robotCommand('turn_left')" title="Turn left 90°">⟲</button>
+                            <button class="pad right" onclick="robotCommand('turn_right')" title="Turn right 90°">⟳</button>
+                            <button class="pad down" onclick="robotCommand('backward')" title="Back 10 cm">▼</button>
+                        </div>
+                        <div class="control-rows">
+                            <span class="label">Head</span>
+                            <span class="actions">
+                                <button class="secondary" onclick="robotCommand('head_up')">Up</button>
+                                <button class="secondary" onclick="robotCommand('head_middle')">Level</button>
+                                <button class="secondary" onclick="robotCommand('head_down')">Down</button>
+                            </span>
+                            <span class="label">Lift</span>
+                            <span class="actions">
+                                <button class="secondary" onclick="robotCommand('lift_up')">Up</button>
+                                <button class="secondary" onclick="robotCommand('lift_down')">Down</button>
+                            </span>
+                            <span class="label">Charger</span>
+                            <span class="actions">
+                                <button class="secondary" onclick="robotCommand('dock')">Go to charger</button>
+                                <button class="secondary" onclick="robotCommand('undock')">Drive off</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="section-head">
+                            <h3>Camera</h3>
+                            <button onclick="takeSnapshot()">Snapshot</button>
+                        </div>
+                        <div class="camera"><img id="cameraImage" alt="Camera snapshot" hidden>
+                            <span id="cameraHint" class="muted">No snapshot yet.</span></div>
+                    </div>
+                    <div class="card">
+                        <h3>Personality</h3>
+                        <form class="row say-row" onsubmit="sayText(event)">
+                            <input type="text" id="sayInput" placeholder="Make Vector say something…" maxlength="255">
+                            <button type="submit">Say</button>
+                        </form>
+                        <div class="control-rows">
+                            <span class="label">Eye color</span>
+                            <span class="row"><select id="eyeColorSelect"></select>
+                                <button class="secondary" onclick="setRobotOption('eye_color', 'eyeColorSelect')">Set</button></span>
+                            <span class="label">Volume</span>
+                            <span class="row"><select id="volumeSelect"></select>
+                                <button class="secondary" onclick="setRobotOption('volume', 'volumeSelect')">Set</button></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Robot</h3>
+                        <dl id="diagRobot" class="kv"></dl>
+                    </div>
+                    <div class="card">
+                        <h3>Sensors</h3>
+                        <dl id="diagSensors" class="kv"></dl>
+                    </div>
+                    <div class="card">
+                        <h3>Home Assistant links</h3>
+                        <dl id="diagLinks" class="kv"></dl>
+                    </div>
+                    <div class="card">
+                        <h3>Services</h3>
+                        <dl id="diagServices" class="kv"></dl>
+                    </div>
+                    <div class="card">
+                        <h3>System</h3>
+                        <dl id="diagSystem" class="kv"></dl>
+                    </div>
+                    <div class="card">
+                        <h3>Network</h3>
+                        <dl id="diagNetwork" class="kv"></dl>
+                    </div>
+                </div>
+                <div class="card wide">
+                    <h3>Recent voice requests</h3>
+                    <pre id="diagVoice" class="log"></pre>
+                </div>
+                <div class="card wide">
+                    <div class="section-head">
+                        <h3>Service log</h3>
+                        <div class="actions">
+                            <select id="logUnit">
+                                <option>vic-cloud</option>
+                                <option>vic-engine</option>
+                                <option>vic-anim</option>
+                                <option>vic-robot</option>
+                                <option>vic-switchboard</option>
+                                <option>wired</option>
+                            </select>
+                            <button onclick="loadLogs()">Show</button>
+                        </div>
+                    </div>
+                    <pre id="logOutput" class="log tall"></pre>
+                </div>
+            </section>
+
+            <!-- Vectro voice + MQTT config -->
+            <section id="voice" class="tab-content">
+                <h2>Voice &amp; Home Assistant</h2>
+                <p class="muted">"Hey Vector" requests go to speech-to-text, then to Home Assistant; Vector speaks the
+                    reply. Home Assistant can make him speak over MQTT.</p>
+                <div id="vectroStatus" class="banner" hidden></div>
+                <form id="vectroForm" class="form" onsubmit="saveVectroConfig(event)">
+                    <fieldset>
+                        <legend>Home Assistant</legend>
+                        <label>URL <input id="cfgHAURL" type="url" placeholder="http://10.0.0.3:8123"></label>
+                        <label>Long-lived access token
+                            <input id="cfgHAToken" type="password" autocomplete="off"
+                                placeholder="leave as is to keep the current token">
+                        </label>
+                        <label>Conversation agent (optional)
+                            <input id="cfgAgent" type="text" placeholder="default agent">
+                        </label>
+                        <label>Language <input id="cfgLanguage" type="text" placeholder="en"></label>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Speech-to-text (Wyoming)</legend>
+                        <label>Whisper host:port <input id="cfgWhisper" type="text" placeholder="10.0.0.3:10300"></label>
+                    </fieldset>
+                    <fieldset>
+                        <legend>MQTT</legend>
+                        <label>Broker <input id="cfgBroker" type="text" placeholder="tcp://10.0.0.3:1883"></label>
+                        <label>Username (optional) <input id="cfgMQTTUser" type="text"></label>
+                        <label>Password (optional)
+                            <input id="cfgMQTTPass" type="password" autocomplete="off"
+                                placeholder="leave as is to keep the current password">
+                        </label>
+                    </fieldset>
+                    <div class="actions">
+                        <button type="submit">Save &amp; apply</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Preferences (wired's JdocSettings) -->
+            <section id="jdocsettings" class="tab-content">
+                <h2>Preferences</h2>
+                <p class="muted">Used by Vector's own clock, timers and units.</p>
+                <div id="jdocStatus"></div>
+                <div class="form">
+                    <label id="locationLabel" for="location">Location
+                        <span class="row">
+                            <input type="text" placeholder="San Francisco, California" id="location">
+                            <button id="locationSet" onclick="setLocation()">Set</button>
+                        </span>
+                    </label>
+                    <label id="timezoneLabel" for="timezone">Time zone
+                        <span class="row">
+                            <select name="timezone" id="timezone"></select>
+                            <button id="timezoneSet" onclick="setTimezone()">Set</button>
+                        </span>
+                    </label>
+                    <label id="tempLabel" for="tUnits">Temperature units
+                        <span class="row">
+                            <select name="tUnits" id="tUnits">
+                                <option value="f">Fahrenheit</option>
+                                <option value="c">Celsius</option>
+                            </select>
+                            <button id="tempSet" onclick="setTempUnits()">Set</button>
+                        </span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Wake word: custom word + sensitivity -->
+            <section id="wakeword" class="tab-content">
+                <h2>Wake Word</h2>
+                <div class="card">
+                    <h3>Custom wake word</h3>
+                    <p class="muted">At least two syllables and five letters.</p>
+                    <div id="wakeWordStatus"></div>
+                    <div class="form">
+                        <label id="keywordLabel" for="keyword">Desired wake word
+                            <input type="text" placeholder="Hey Vector" id="keyword">
+                        </label>
+                        <div class="actions">
+                            <button id="genWakeWord" onclick="genWakeWord()">Generate wake word</button>
+                            <button id="revertDefaultWakeWord" class="secondary" onclick="revertDefaultWakeWord()">Revert
+                                to default</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Sensitivity</h3>
+                    <p class="muted">Default 0.45. Higher hears more but triggers falsely more.</p>
+                    <div class="row">
+                        <input type="range" id="sensitivitySlider" min="0.001" max="0.999" step="0.001" value="0.500"
+                            oninput="document.getElementById('sensitivityInput').value = this.value">
+                        <input type="number" id="sensitivityInput" min="0.001" max="0.999" step="0.001" value="0.500"
+                            oninput="document.getElementById('sensitivitySlider').value = this.value">
+                        <button id="setSensitivityBtn" onclick="sendSensitivity()">Set</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Faces -->
+            <section id="faces" class="tab-content">
+                <h2>Faces</h2>
+                <p class="muted">List, rename, delete or enroll faces.</p>
+                <div id="facesStatus" class="faces-status" style="display:none;"></div>
+                <div class="card">
+                    <h3>Enroll a new face</h3>
+                    <div class="row">
+                        <input type="text" id="faceNewName" placeholder="Name">
+                        <button type="button" onclick="faceTrain()">Start enroll</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="section-head">
+                        <h3>Enrolled faces</h3>
+                        <button type="button" id="facesRefreshBtn" onclick="facesRefresh()">Refresh</button>
+                    </div>
+                    <div id="facesList" class="faces-list"></div>
+                </div>
+            </section>
+
+            <!-- Performance profiles -->
+            <section id="mainmods" class="tab-content">
+                <h2>Performance</h2>
+                <div id="modStatus"></div>
+                <div id="mods">
+                    <p class="muted">Higher profiles make the SDK faster but run warmer.</p>
+                    <form class="segmented">
+                        <input type="radio" id="regular" name="frequency" value="0" onchange="FreqChange_Submit()">
+                        <label for="regular">Regular</label>
+                        <input type="radio" id="balanced" name="frequency" value="1" onchange="FreqChange_Submit()">
+                        <label for="balanced">Balanced</label>
+                        <input type="radio" id="performance" name="frequency" value="2"
+                            onchange="FreqChange_Submit()">
+                        <label for="performance">Performance</label>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Updates -->
+            <section id="aud" class="tab-content">
+                <h2>Updates</h2>
+                <p class="muted">Automatic WireOS updates would replace Vectro's custom parts. Keep them disabled.</p>
+                <div id="autoUpdateStatus"></div>
+                <div class="actions">
+                    <button id="autoUpdateInhibit" onclick="autoUpdateInhibit()">Disable auto-updates</button>
+                    <button id="autoUpdateAllow" class="secondary" onclick="autoUpdateAllow()">Enable</button>
+                </div>
+            </section>
+
+            <div id="showDuringVicRestart" class="banner" style="display: none;">
+                Vector is restarting, please wait…
+            </div>
+            <div id="restartNeeded" class="banner" style="display: none;">
+                A restart is needed for changes to take effect.
+                <input type="button" value="Restart" id="restartButton" onclick="RestartVic()">
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/vectro.js"></script>
+    <script src="js/freq.js"></script>
+    <script src="js/wakeword-pv.js"></script>
+    <script src="js/auto-update.js"></script>
+    <script src="js/sensitivity-pv.js"></script>
+    <script src="js/jdoc-settings.js"></script>
+    <script src="js/faces.js"></script>
+</body>
+
+</html>

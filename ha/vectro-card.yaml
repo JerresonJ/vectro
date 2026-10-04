@@ -1,0 +1,200 @@
+# Vectro dashboard card (core Home Assistant cards only).
+# Add to a dashboard: Edit dashboard > Add card > Manual, paste this.
+# Entity IDs assume the robot "Vectro X9C2"; for another robot replace x9c2.
+type: vertical-stack
+cards:
+  - type: heading
+    heading: Vectro X9C2
+    heading_style: title
+    icon: mdi:robot-happy
+    badges:
+      - type: entity
+        entity: sensor.vectro_x9c2_battery_voltage
+      - type: entity
+        entity: binary_sensor.vectro_x9c2_charging
+        show_state: false
+
+  - type: picture-entity
+    entity: camera.vectro_x9c2_camera
+    camera_view: auto
+    show_name: false
+    show_state: false
+    tap_action:
+      action: perform-action
+      perform_action: button.press
+      target:
+        entity_id: button.vectro_x9c2_take_snapshot
+
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+      - type: tile
+        entity: sensor.vectro_x9c2_activity
+        name: Activity
+      - type: tile
+        entity: sensor.vectro_x9c2_battery
+        name: Battery
+      - type: tile
+        entity: binary_sensor.vectro_x9c2_on_charger
+        name: Docked
+
+  # Drive pad: tap the camera image for a fresh snapshot.
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+      - type: button
+        show_name: false
+        show_icon: false
+        tap_action:
+          action: none
+      - type: button
+        entity: button.vectro_x9c2_drive_forward
+        name: Forward
+        icon: mdi:arrow-up-bold
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_drive_forward
+      - type: button
+        show_name: false
+        show_icon: false
+        tap_action:
+          action: none
+      - type: button
+        entity: button.vectro_x9c2_turn_left
+        name: Left
+        icon: mdi:rotate-left
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_turn_left
+      - type: button
+        entity: button.vectro_x9c2_drive_backward
+        name: Back
+        icon: mdi:arrow-down-bold
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_drive_backward
+      - type: button
+        entity: button.vectro_x9c2_turn_right
+        name: Right
+        icon: mdi:rotate-right
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_turn_right
+
+  # Head and lift
+  - type: grid
+    columns: 5
+    square: false
+    cards:
+      - type: button
+        entity: button.vectro_x9c2_head_up
+        name: Head up
+        icon: mdi:arrow-up-circle
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_head_up
+      - type: button
+        entity: button.vectro_x9c2_head_level
+        name: Level
+        icon: mdi:circle-outline
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_head_level
+      - type: button
+        entity: button.vectro_x9c2_head_down
+        name: Head down
+        icon: mdi:arrow-down-circle
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_head_down
+      - type: button
+        entity: button.vectro_x9c2_lift_up
+        name: Lift up
+        icon: mdi:forklift
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_lift_up
+      - type: button
+        entity: button.vectro_x9c2_lift_down
+        name: Lift down
+        icon: mdi:arrow-collapse-down
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_lift_down
+
+  # Charger and camera
+  - type: grid
+    columns: 3
+    square: false
+    cards:
+      - type: button
+        entity: button.vectro_x9c2_go_to_charger
+        name: Go home
+        icon: mdi:home-battery
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_go_to_charger
+      - type: button
+        entity: button.vectro_x9c2_drive_off_charger
+        name: Drive off
+        icon: mdi:robot-outline
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_drive_off_charger
+      - type: button
+        entity: button.vectro_x9c2_take_snapshot
+        name: Snapshot
+        icon: mdi:camera-iris
+        show_state: false
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.vectro_x9c2_take_snapshot
+
+  - type: entities
+    state_color: true
+    entities:
+      - entity: text.vectro_x9c2_say_text
+        name: Say something
+      - entity: select.vectro_x9c2_eye_color
+        name: Eye color
+      - entity: select.vectro_x9c2_volume
+        name: Volume
+      - entity: number.vectro_x9c2_auto_snapshot_interval
+        name: Auto-snapshot (s, 0 = off)

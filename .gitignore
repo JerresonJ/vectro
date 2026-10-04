@@ -1,0 +1,14 @@
+# Secrets and robot keys never go in the repo
+keys/*
+!keys/README.md
+*.pem
+*.key
+config.json
+
+# Third-party checkouts tracked by reference
+upstream/
+
+# Build output and downloaded OTAs
+vectro-cloud/build/
+vectro-ui/build/
+ota/
